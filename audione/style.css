@@ -1,4 +1,38 @@
-body{
+@import url("https://fonts.googleapis.com/css?family=Jost");
+html{
     background-image: url(Img/sfondo.jpg);
-    font-family: jost
 }
+body{
+    font-family: jost;
+}
+.div_err{
+    margin: auto;
+}
+.h1_err{
+    margin: auto;
+}
+#logo{
+    height: 70px;
+    display:block;
+    width: auto;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+#map{
+    height: 400px ; 
+    width: 100%;
+}
+#header{
+    color:#e3c700;
+    font-size: 28;
+    text-align:center;
+    height: 90px;
+    width: 300px;
+    margin-bottom:15px;
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
