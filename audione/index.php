@@ -1,4 +1,5 @@
 <?php 
+    session_start();
     include_once("connection.php");
 ?>
 <html>
@@ -19,50 +20,81 @@
     ?>
     <div id="header"><img id="logo"src="img/logo.png" alt="logo">Audioguida Rovereto</div>
     <div id="map"></div>
-    <div id="nome_marker"></div>
+    <div id="nome_marker">
+      <?php
+        if(isset($_SESSION["selezionato"])){
+          $stampa= mysqli_query($con,"SELECT nome FROM tappa WHERE id=".$_SESSION["id"]."");
+          echo "| ".mysqli_fetch_assoc($stampa)["nome"];
+        }else{
+          echo"| AUDIOGUIDA ROVERETO";
+        }
+        ?>
+    </div>
     <div id="info_marker">
-        <div id="audio"></div>
-        <div id = "descrizione_audio"></div>
+        <div id="audio">
+        <?php
+              if(isset($_SESSION["selezionato"])){
+                  echo "<source src='/Audio/".$_SESSION['id'].".mp3' type='audio/mpeg'>";
+              }
+            ?>
+        </div>
+        <div id = "descrizione_audio">
+          <?php
+            if(isset($_SESSION["selezionato"])){
+
+            }else{
+              echo"Benvenuti a Rovereto! Se desiderate scoprire e conoscere appieno questa
+              meravigliosa città, l'utilizzo di un'audioguida può essere estremamente
+              utile e vantaggioso.
+              Rovereto, situata nel cuore della splendida regione del Trentino-Alto Adige
+              in Italia, è una città ricca di storia, cultura e bellezze naturali. Con la sua
+              lunga tradizione e il suo patrimonio culturale, Rovereto offre molte
+              attrazioni da esplorare e siti da visitare.
+              L'audioguida vi permetterà di scoprire i luoghi di interesse più significativi
+              della città, fornendovi informazioni dettagliate e approfondite su ciascun
+              luogo. Potrete ascoltare interessanti racconti storici, curiosità e aneddoti
+              sulla città e i suoi monumenti.
+              Sia che siate appassionati di storia, amanti dell'arte o semplicemente
+              desideriate scoprire il fascino di questa incantevole città, l'audioguida sarà
+              un prezioso compagno di viaggio. Buona esplorazione!";
+            }
+
+          ?>
+        </div>
         <div id="immagini">
+          <img src="" alt="">
             <?php
-             //creare lista immagini e in caso di assenza immagini non mostrare niente
+              if(isset($_SESSION["selezionato"])){
+                $stampa = mysqli_query($con, "SELECT nome_file FROM  fotografia WHERE id = ".$_SESSION["id"]."");
+                while($row=mysqli_fetch_assoc($stampa))
+                {
+                  echo "<img src=/Fotografie/".$row['nome_file'].".jpg alt='img'>";
+                }
+              }
             ?>
         </div>
     </div>
-    <div id="foot"></div>
+    <footer>L'audioguida fornisce una guida audio dettagliata e coinvolgente,
+arricchendo l'esperienza di visita con informazioni, storie e
+approfondimenti sulle opere d'arte o i luoghi di interesse.</footer>
     <?php
         }
     ?>
 </body>
 <script>
 function initMap() {
-    const uluru = { lat: -25.363, lng: 131.044 };
-    const contentString =
-    '<div id="content">' +
-    '<div id="siteNotice">' +
-    "</div>" +
-    '<h1 id="firstHeading" class="firstHeading">Uluru</h1>' +
-    '<div id="bodyContent">' +
-    "<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large " +
-    "sandstone rock formation in the southern part of the " +
-    "Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) " +
-    "south west of the nearest large town, Alice Springs; 450&#160;km " +
-    "(280&#160;mi) by road. Kata Tjuta and Uluru are the two major " +
-    "features of the Uluru - Kata Tjuta National Park. Uluru is " +
-    "sacred to the Pitjantjatjara and Yankunytjatjara, the " +
-    "Aboriginal people of the area. It has many springs, waterholes, " +
-    "rock caves and ancient paintings. Uluru is listed as a World " +
-    "Heritage Site.</p>" +
-    '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">' +
-    "https://en.wikipedia.org/w/index.php?title=Uluru</a> " +
-    "(last visited June 22, 2009).</p>" +
-    "</div>" +
-    "</div>";
-    const infowindow = new google.maps.InfoWindow({
-    content: contentString,
-    ariaLabel: "Uluru",
-    });
-    const map = new google.maps.Map(document.getElementById("map"), {
+  <?php 
+$stampa = mysqli_query($con, "SELECT * FROM  tappa");?>
+  var infoWindowContent= [
+        <?php
+            while($row = mysqli_fetch_assoc($stampa)){ ?>
+                '<div class="info_content"><h3><?php echo str_replace("'","\'",$row["nome"]); ?></h3></div>',
+        <?php 
+        }
+        ?>
+        ];
+    var infoWindow = new google.maps.InfoWindow(), marker;
+    var map = new google.maps.Map(document.getElementById("map"), {
             zoom: 15,
             center:{ 
             lat: 45.890926,  lng: 11.043676},
@@ -70,44 +102,33 @@ function initMap() {
     });
 <?php 
 $stampa = mysqli_query($con, "SELECT * FROM  tappa");
-
-while($row=mysqli_fetch_assoc($stampa))
+$i=0;
+while($row2=mysqli_fetch_assoc($stampa))
 {
+    
     $rimpiazza = [" ","'","-"];
-    $nome = str_replace($rimpiazza,"",$row["nome"]);
+    $nome = str_replace($rimpiazza,"",$row2["nome"]);
     ?>
     
-    const Marker<?php echo($nome);?>= new google.maps.Marker({
-        position: <?php echo("{lat: ".$row["lat"].", lng: ".$row["lon"]."}");?>,
+    var Marker<?php echo($nome);?>= new google.maps.Marker({
+        position: <?php echo("{lat: ".$row2["lat"].", lng: ".$row2["lon"]."}");?>,
         map,
-        title: "<?php echo($row["nome"]);?>",
+        title: "<?php echo($row2["nome"]);?>",
     });
-    google.maps.event.addListener(Marker<?php echo($nome);?>,"click", () => {
-      infowindow.open({
-        map,
-        anchor: Marker<?php echo($nome);?>,
-      });
-    });
+    google.maps.event.addListener(Marker<?php echo $nome;?>,"click", (function(marker) {
+            return function() {
+                infoWindow.setContent(infoWindowContent[<?php echo$i ?>]);
+                infoWindow.open(map, marker);
+                <?php $_SESSION["selezionato"] = true; $_SESSION["id"]=$row2["id"]?>
+            }
+        })(marker));
     <?php
+    $i++;
 }
 ?>
-
-/*infoWindow.open(map);
-  // Configure the click listener.
-  map.addListener("click", (mapsMouseEvent) => {
-    // Close the current InfoWindow.
-    infoWindow.close();
-    // Create a new InfoWindow.
-    infoWindow = new google.maps.InfoWindow({
-      position: mapsMouseEvent.latLng,
-    });
-    infoWindow.setContent(
-      JSON.stringify(mapsMouseEvent.latLng.toJSON(), null, 2)
-    );
-    infoWindow.open(map);
-  });*/
 }
-window.initMap = initMap();
+google.maps.event.addDomListener(window, 'load', initMap);
+//https://www.codexworld.com/adding-multiple-markers-with-info-windows-to-google-maps-dynamically-from-database/
 </script>
 <script
       src="https://maps.googleapis.com/maps/api/js?callback=initMap&v=weekly"

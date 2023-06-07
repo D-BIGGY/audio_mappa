@@ -1,9 +1,10 @@
 @import url("https://fonts.googleapis.com/css?family=Jost");
 html{
-    background-image: url(Img/sfondo.jpg);
+    
 }
 body{
     font-family: jost;
+    background-image: url(Img/sfondo.jpg);
 }
 .div_err{
     margin: auto;
@@ -34,5 +35,23 @@ body{
     margin-left: auto;
     margin-right: auto;
 }
-
+#nome_marker{
+    background-color: white;
+    color:#003c50;
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+footer{
+    background-color: #e3c700;
+    color:#003c50;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+#descrizione_audio{
+    text-align: justify;
+    margin-left: 5%;
+    margin-right: 5%;
+}
 
