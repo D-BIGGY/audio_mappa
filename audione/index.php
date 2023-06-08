@@ -13,12 +13,13 @@
         if($err){//pagina di errore nel caso il collegamento con il server non si andato a buon fine
             ?>
             <div id="div_err">
-                <center><h1 class="h1_err">Errore nello stabilire la connessione con il server, si prega di riprovare più tardi</h1></center>
+                <h1 class="h1_err">Errore nello stabilire la connessione con il server, si prega di riprovare più tardi</h1>
             </div>
             <?php
         }else{
     ?>
     <div id="header"><img id="logo"src="img/logo.png" alt="logo">Audioguida Rovereto</div>
+    dghf
     <div id="map"></div>
     <div id="nome_marker">
       <?php
@@ -38,7 +39,7 @@
               }
             ?>
         </div>
-        <div id = "descrizione_audio">
+        <div id = "descrizione_audio">ggg
           <?php
             if(isset($_SESSION["selezionato"])){
 
@@ -110,18 +111,19 @@ while($row2=mysqli_fetch_assoc($stampa))
     $nome = str_replace($rimpiazza,"",$row2["nome"]);
     ?>
     
-    var Marker<?php echo($nome);?>= new google.maps.Marker({
+    var Marker<?php echo($i);?>= new google.maps.Marker({
         position: <?php echo("{lat: ".$row2["lat"].", lng: ".$row2["lon"]."}");?>,
         map,
         title: "<?php echo($row2["nome"]);?>",
     });
-    google.maps.event.addListener(Marker<?php echo $nome;?>,"click", (function(marker) {
-            return function() {
+    google.maps.event.addListener(Marker<?php echo $i;?>,"click", function(marker) {
+        
+      console.log(infoWindowContent[<?php echo$i ?>]);
                 infoWindow.setContent(infoWindowContent[<?php echo$i ?>]);
-                infoWindow.open(map, marker);
-                <?php $_SESSION["selezionato"] = true; $_SESSION["id"]=$row2["id"]?>
-            }
-        })(marker));
+                infoWindow.open(map,Marker<?php echo $i;?>);
+              
+            
+        });
     <?php
     $i++;
 }
